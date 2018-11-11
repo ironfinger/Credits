@@ -11,33 +11,31 @@ class P2pServer {
     }
 
     listen() { // Do the job of creating and starting up the server.
+        // Initial Setup:
         const server = new WebSocket.Server({ port: P2P_PORT }); // Create a new Websocket server object.
-        
+        this.connectToPeers(); // Connect to the other peers already on the network. Parameters given by env variables.
         // Event listener, can listen to incomming messages sent to the server.
         // First argument provides the event that we're listening for.
-        server.on('connection', socket => this.connectSocket(socket)); 
-
-        this.connectToPeers();
-
-
-        console.log(`Listening for peer-to-peer connections on: ${P2P_PORT}`);
+        server.on('connection', socket => this.connectSocket(socket)); //Listen for any connections.
+        console.log(`Listening for peer-to-peer connections on: ${P2P_PORT}`); // Make sure that I know we are doing shit.
     }
     
-    connectToPeers() {
+    connectToPeers() { 
+        /*
+            This function will connect to all of the nodes already on the network.
+            This function does not apply to existing nodes.
+        */
         peers.forEach(peer => {
             // ws://localhost:5001
             const socket = new WebSocket(peer);
-
-            socket.on('open', () => this.connectSocket(socket));;
+            socket.on('open', () => this.connectSocket(socket)); // This will connect to the socket and add it to the array.
         });
     }
 
-    connectSocket(socket) { // Add the new socket to the sockets array.
+    connectSocket(socket) {
         this.sockets.push(socket);
         console.log('socket connected');
-
         this.messageHandler(socket); // Attach message handler here becuase all sockets run through this function.
-        
         this.sendChain(socket);
     }
 
@@ -49,7 +47,7 @@ class P2pServer {
     }
 
     sendChain(socket) {
-        socket.send(JSON.stringify(this.blockchain.chain));
+        socket.send(JSON.stringify(this.blockchain.chain)); // Send something to a specific socket.
     }
 
     syncChains() {
