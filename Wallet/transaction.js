@@ -7,6 +7,22 @@ class Transaction { // This class holds a transaction between two wallets.
         this.outputs = []; // Stores the outputs of the transaction. So we can easily know the senderWallet and their new balance and public key, and the amount that is going to the recipient.
     }
 
+    update(senderWallet, recipient, amount) { // Update the transaction to send more currency to more places with one transaction.
+        // Find the origianl sender output.
+        const senderOutput = this.outputs.find(output => output.address === senderWallet.publicKey); // Get an output of a wallet where the output address is equal to the senderWallet public key.
+        
+        // If the user attempts to make a transaction with the amount that they were already meant to end up with ?.
+        if (amount > senderOutput.amount) { 
+            console.log(`Amount: ${amount} exceeds balance.`);
+            return;
+        }
+
+        senderOutput.amount = senderOutput.amount - amount;
+        this.outputs.push({ amount });
+        Transaction.signTransaction(this, senderWallet);
+        return this;
+    }
+
     static newTransaction(senderWallet, recipient, amount) {
         const transaction = new this(); // Create the new transaction.
 
