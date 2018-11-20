@@ -18,7 +18,7 @@ class Transaction { // This class holds a transaction between two wallets.
         }
 
         senderOutput.amount = senderOutput.amount - amount;
-        this.outputs.push({ amount });
+        this.outputs.push({ amount, address: recipient });
         Transaction.signTransaction(this, senderWallet);
         return this;
     }
