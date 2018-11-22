@@ -34,9 +34,13 @@ app.post('/mine', (req, res) => {
 
 app.post('/transact', (req, res) => {
     const { recipient, amount } = req.body;
-    console.log(recipient);
-    console.log(amount);
-    res.send(`${recipient} || ${amoun}`);
+    // console.log(req.body);
+    // console.log(recipient);
+    // console.log(amount);
+    // res.send(`${recipient} || ${amount}`);
+
+    const transaction = wallet.createTransaction(recipient, amount, tp);
+    res.redirect('/transactions');
 });
 
 app.listen(HTTP_PORT, () => console.log(`Listening on ${HTTP_PORT}`));
