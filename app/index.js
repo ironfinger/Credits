@@ -5,15 +5,13 @@ const P2pSerevr = require('./p2p-server');
 const Wallet = require('../Wallet');
 const TransactionPool = require('../Wallet/transaction-pool');
 
-const HTTP_PORT = process.env.HTTP_PORT ||  3020;
+const HTTP_PORT = process.env.HTTP_PORT ||  3010;
 
 const app = express();
 const bc = new Blockchain();
 const p2pServer = new P2pSerevr(bc);
 const wallet = new Wallet();
 const tp = new TransactionPool();
-
-wallet.createTransaction('recipient', 20, tp);
 
 app.use(bodyParser.json());
 
@@ -32,6 +30,13 @@ app.post('/mine', (req, res) => {
     p2pServer.syncChains();
     
     res.redirect('/blocks');
+});
+
+app.post('/transact', (req, res) => {
+    const { recipient, amount } = req.body;
+    console.log(recipient);
+    console.log(amount);
+    res.send(`${recipient} || ${amoun}`);
 });
 
 app.listen(HTTP_PORT, () => console.log(`Listening on ${HTTP_PORT}`));
