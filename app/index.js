@@ -8,10 +8,10 @@ const TransactionPool = require('../Wallet/transaction-pool');
 const HTTP_PORT = process.env.HTTP_PORT ||  3010;
 
 const app = express();
-const bc = new Blockchain();
-const p2pServer = new P2pSerevr(bc);
+const bc = new Blockchain(); // Blockchain object.
+const tp = new TransactionPool(); // Transaction Pool.
+const p2pServer = new P2pSerevr(bc, tp);
 const wallet = new Wallet();
-const tp = new TransactionPool();
 
 app.use(bodyParser.json());
 

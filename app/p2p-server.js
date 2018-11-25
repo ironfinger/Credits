@@ -3,10 +3,16 @@ const WebSocket = require('ws');
 
 const P2P_PORT = process.env.P2P_PORT || 5001;
 const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
+const MESSAGE_TYPES = { // We need a way of differentiating between different message types.
+    chain: 'CHAIN', // This will be used to recognise a chain.
+    transactions: 'TRANSACTION' // This will be used to recognise a transaction.
+};
+
 
 class P2pServer {
-    constructor(blockchain) {
-        this.blockchain = blockchain;
+    constructor(blockchain, transactionPool) {
+        this.blockchain = blockchain; // Add the blockchain to the node, to syncronise transaction pools.
+        this.transactionPool = transactionPool; // Add the transactionpool to the node, to syncronise transaction pools.
         this.sockets = []; // This will contain a list of webSocket servers that will connect to this one.
     }
 
@@ -47,7 +53,40 @@ class P2pServer {
     }
 
     sendChain(socket) {
-        socket.send(JSON.stringify(this.blockchain.chain)); // Send something to a specific socket.
+        // Version without the type:
+        //socket.send(JSON.stringify(this.blockchain.chain)); // Send something to a specific socket.
+    
+        // Version with the type:
+        socket.send(JSON.stringify({
+                type: MESSAGE_TYPES.chain, // Change the message type to chain.
+                chain: this.blockchain.chain // Put the chain into the chain.
+            })
+        );
+    }
+
+    sendTransaction(socket, transaction) {
+        // Send the transaction to the parsed socket.
+        // Version without the type:
+        //socket.send(JSON.stringify(transaction)); // Send the transaction.
+    
+        // Version with the type:
+        socket.send(JSON.stringify({
+            type: MESSAGE_TYPES.transaction, // Change the message type to transaction.
+            transaction: transaction // Put the transaction into the transaction part.
+        })); 
+    }
+
+    broadcastTransaction(transaction) {
+
+
+        // Simplified Code:
+        // this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
+        
+        // Same thing but detailed.
+        for (let i = 0; i < array.length; i++) {
+            const socket = this.sockets[i]; // Get a socket in the sockets array.
+            this.sendTransaction(socket, transaction); // Send the transaction to that socket.
+        }
     }
 
     syncChains() {
