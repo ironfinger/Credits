@@ -23,6 +23,10 @@ app.get('/transactions', (req, res) => {
     res.json(tp.transactions);
 });
 
+app.get('/public-key', (req, res) => {
+    res.json({ publicKey: wallet.publicKey });
+});
+
 app.post('/mine', (req, res) => {
     const block = bc.addBlock(req.body.data);
     console.log(`New block added: ${block.toString}`);
