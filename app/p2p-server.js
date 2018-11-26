@@ -48,7 +48,14 @@ class P2pServer {
     messageHandler(socket) { // Recieves blockchain object for the miner(socket).
         socket.on('message', message => {
             const data = JSON.parse(message);
-            this.blockchain.replaceChain(data);
+            switch(data.type) { // Decode the JSON object to see if the data is a transaction or a chain.
+                case MESSAGE_TYPES.chain:
+                    this.blockchain.replaceChain(data.chain); // Replace the chain.
+                    break;
+                case MESSAGE_TYPES.transaction:
+                    this.transactionPool.updateOrAddTransaction(data.transaction); // Update or add transactions.
+                    break;
+            }
         });
     }
 
@@ -72,7 +79,7 @@ class P2pServer {
         // Version with the type:
         socket.send(JSON.stringify({
             type: MESSAGE_TYPES.transaction, // Change the message type to transaction.
-            transaction: transaction // Put the transaction into the transaction part.
+            transaction // Put the transaction into the transaction part.
         })); 
     }
 
@@ -80,18 +87,20 @@ class P2pServer {
 
 
         // Simplified Code:
-        // this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
+        this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
         
         // Same thing but detailed.
-        for (let i = 0; i < array.length; i++) {
-            const socket = this.sockets[i]; // Get a socket in the sockets array.
-            this.sendTransaction(socket, transaction); // Send the transaction to that socket.
-        }
+        // for (let i = 0; i < this.sockets.length; i++) {
+        //      const socket = this.sockets[i]; // Get a socket in the sockets array.
+        //      this.sendTransaction(socket, transaction); // Send the transaction to that socket.
+        // }
     }
 
     syncChains() {
         this.sockets.forEach(socket => this.sendChain(socket));
     }
 }
+
+//WATCH THE VIDEO.
 
 module.exports = P2pServer;

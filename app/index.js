@@ -33,13 +33,9 @@ app.post('/mine', (req, res) => {
 });
 
 app.post('/transact', (req, res) => {
-    const { recipient, amount } = req.body;
-    // console.log(req.body);
-    // console.log(recipient);
-    // console.log(amount);
-    // res.send(`${recipient} || ${amount}`);
-
-    const transaction = wallet.createTransaction(recipient, amount, tp);
+    const { recipient, amount } = req.body; // Get the recipient and the amount to transact.
+    const transaction = wallet.createTransaction(recipient, amount, tp); // Create the transaction.
+    p2pServer.broadcastTransaction(transaction); // Broadcast the transaction.
     res.redirect('/transactions');
 });
 
