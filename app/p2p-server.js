@@ -5,7 +5,8 @@ const P2P_PORT = process.env.P2P_PORT || 5001;
 const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 const MESSAGE_TYPES = { // We need a way of differentiating between different message types.
     chain: 'CHAIN', // This will be used to recognise a chain.
-    transactions: 'TRANSACTION' // This will be used to recognise a transaction.
+    transactions: 'TRANSACTION', // This will be used to recognise a transaction.
+    clear_transactions: 'CLEAR_TRANSACTIONS' // This will be used to recognise clear transaction signal.
 };
 
 
@@ -55,6 +56,9 @@ class P2pServer {
                 case MESSAGE_TYPES.transaction:
                     this.transactionPool.updateOrAddTransaction(data.transaction); // Update or add transactions.
                     break;
+                case MESSAGE_TYPES.clear_transactions:
+                    this.transactionPool.clear();
+                    break;
             }
         });
     }
@@ -84,16 +88,20 @@ class P2pServer {
     }
 
     broadcastTransaction(transaction) {
-
-
         // Simplified Code:
-        this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
+         this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
         
         // Same thing but detailed.
         // for (let i = 0; i < this.sockets.length; i++) {
         //      const socket = this.sockets[i]; // Get a socket in the sockets array.
         //      this.sendTransaction(socket, transaction); // Send the transaction to that socket.
         // }
+    }
+
+    broadcastClearTransactions() {
+        this.sockets.forEach(socket => socket.send(JSON.stringify({
+            type: MESSAGE_TYPES.clear_transactions
+        })));
     }
 
     syncChains() {

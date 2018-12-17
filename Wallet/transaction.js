@@ -1,4 +1,5 @@
 const ChainUtil = require('../chain-util');
+const { REWARD } = require('../config');
 
 class Transaction { // This class holds a transaction between two wallets.
     constructor() {
@@ -10,7 +11,8 @@ class Transaction { // This class holds a transaction between two wallets.
     update(senderWallet, recipient, amount) { // Update the transaction to send more currency to more places with one transaction.
         // Find the origianl sender output.
         const senderOutput = this.outputs.find(output => output.address === senderWallet.publicKey); // Get an output of a wallet where the output address is equal to the senderWallet public key.
-        
+
+
         // If the user attempts to make a transaction with the amount that they were already meant to end up with ?.
         if (amount > senderOutput.amount) { 
             console.log(`Amount: ${amount} exceeds balance.`);
@@ -23,22 +25,34 @@ class Transaction { // This class holds a transaction between two wallets.
         return this;
     }
 
-    static newTransaction(senderWallet, recipient, amount) {
+    static transactionWithOutputs(senderWallet, outputs) {
         const transaction = new this(); // Create the new transaction.
 
-        if (amount > senderWallet.balance) { // Check to see if the new transaction amount is greater than the sender wallets amount.
-            console.log(`the amount ${amount} is exceeding the current balance`);
+        transaction.outputs.push(...outputs);
+        Transaction.signTransaction(transaction, senderWallet); // Sign the transaction being created.
+        return transaction;
+    }
+
+    static newTransaction(senderWallet, recipient, amount) {
+        // Check to see if the new transaction amount is greater than the sender wallets amount.
+        if (amount > senderWallet.balance) {
+            console.log(`The amount ${amount} is exceeding the current balance`);
             return;
         }
 
-        transaction.outputs.push(...[
+        console.log(this.validAmount === false);
+
+        return Transaction.transactionWithOutputs(senderWallet, [
             {amount: senderWallet.balance - amount, address: senderWallet.publicKey},
             {amount, address: recipient}
         ]);
+    }
 
-        Transaction.signTransaction(transaction, senderWallet); // Sign the transaction being created.
-
-        return transaction;
+    static rewardTransaction(minerWallet, blockchainWallet) {
+        return Transaction.transactionWithOutputs(blockchainWallet, [{
+            amount: REWARD,
+            address: minerWallet.publicKey
+        }]);
     }
 
     static signTransaction(transactionInput, senderWallet) { // Sign a transaction.
