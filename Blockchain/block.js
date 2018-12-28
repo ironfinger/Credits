@@ -23,7 +23,7 @@ class Block {
     }
 
     static genesis() { // This creates a genesis block which is the first block of the chain.
-        return new this(87948645318, '------', 'f1r57-h45h', "gen", 0, DIFFICULTY);
+        return new this('Genesis time', '------', 'f1r57-h45h', [], 0, DIFFICULTY);
     }
 
 
