@@ -11,9 +11,14 @@ class Miner {
     }
 
     mine() {
+        console.log(`transaction pool: ${JSON.stringify(this.transactionPool)}`);
+
         const validTransactions = this.transactionPool.validTransactions();
+
+        console.log(`Valid Transactions: ${validTransactions}`); 
+
         // include a reward for the miner.
-        validTransactions.push(Transaction.rewardTransaction(this.wallet, Wallet.blockchainWallet()));
+        //validTransactions.push(Transaction.rewardTransaction(this.wallet, Wallet.blockchainWallet()));
 
         // create a block consisiting of the valid transactions.
         const block = this.blockchain.addBlock(validTransactions);

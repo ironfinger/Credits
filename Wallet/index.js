@@ -7,6 +7,7 @@ class Wallet {
         this.balance = INITIAL_BALANCE; // Set the initial balance.
         this.keyPair = ChainUtil.genKeyPair(); // This generates a key pair object.
         this.publicKey = this.keyPair.getPublic().encode('hex'); // Get the public key and turn it into it's hex form.
+        // this.privateKey = this.keyPair.getPrivate().encode('hex');
     }
 
     toString() {
@@ -14,6 +15,25 @@ class Wallet {
             publicKey: ${this.publicKey.toString()}
             balance  : ${this.balance}
         `
+    }
+
+    getWalletEs() {
+        let walletEssentials = {
+            keyPair: this.keyPair,
+            publicKey: this.publicKey
+        }
+
+        console.log('Public key test');
+
+
+        return walletEssentials;
+    }
+
+    reCreateWallet(senderKeys) {
+        keysJSON = JSON.parse(senderKeys); // You may need to put the initial balance if statement:
+        this.keyPair = keysJSON.keyPair;
+        this.publicKey = keysJSON.publicKey
+        this.balance = calculateBalance();
     }
 
     sign(dataHash) {
@@ -26,7 +46,8 @@ class Wallet {
         // Variables: Recipient of the money, the amount to transact, given transactionPool.
         // Check to tsee if the amount currently ecveeds the balance of the wallet.
         this.balance = this.calculateBalance(blockchain);
-
+        console.log(`Balance after re-calculation: ${this.balance}`);
+        
         if (amount > this.balance) {
             console.log(`Amount: ${amount} exceeds current balance: ${this.balance}`);
             return;
@@ -80,6 +101,48 @@ class Wallet {
             if (transaction.input.timestamp > startTime) {
                 transaction.outputs.find(output => {
                     if (output.address === this.publicKey) {
+                        balance += output.amount;
+                    }
+                }); 
+            }
+        });
+
+        return balance;
+    }
+
+    static calculateBalanceWithPublicKey(publicKey, blockchain) {
+        let balance = this.balance;
+        let transactions = [];
+
+        // Run a loop on the blockchain to look at each block one at a time.
+        // blockchain.chain.forEach(block => {
+        //     console.log(block);
+        //     block.data.forEach(transaction => {
+        //         transactions.push(transaction);
+        //     });
+        // });
+
+        blockchain.chain.forEach(block => block.data.forEach(transaction => {
+            transactions.push(transaction);
+        }));
+
+        const walletInputTs = transactions.filter(transaction => transaction.input.address === publicKey);
+
+        let startTime = 0;
+
+        if (walletInputTs.length > 0) {
+            const recentInputT = walletInputTs.reduce(
+                (prev, current) => prev.input.timestamp > current.input.timestamp ? prev : current
+            );
+            
+            balance = recentInputT.outputs.find(output => output.address === publicKey).amount;
+            startTime = recentInputT.input.timestamp;
+        }
+
+        transactions.forEach(transaction => {
+            if (transaction.input.timestamp > startTime) {
+                transaction.outputs.find(output => {
+                    if (output.address === publicKey) {
                         balance += output.amount;
                     }
                 }); 
