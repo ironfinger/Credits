@@ -26,7 +26,6 @@ class Block {
         return new this('Genesis time', '------', 'f1r57-h45h', [], 0, DIFFICULTY);
     }
 
-
     static mineBlock(lastBlock, data) {
         let { difficulty } = lastBlock;
         let nonce = 0;
@@ -70,7 +69,7 @@ class Block {
             difficulty = difficulty;
         }
         */
-
+        
         return difficulty;
     }
 }

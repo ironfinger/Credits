@@ -10,7 +10,7 @@ class Miner {
         this.p2pServer = p2pServer;
     }
 
-    mine() {
+    mine() { 
         console.log(`transaction pool: ${JSON.stringify(this.transactionPool)}`);
 
         const validTransactions = this.transactionPool.validTransactions();

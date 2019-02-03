@@ -18,6 +18,36 @@ const miner = new Miner(bc, tp, wallet, p2pServer);
 var tempAddress = '';
 var tempBalance;
 
+// We need to change the signature process to a security code process where the user has to give their security code:
+// Change the signature verification method to an 'OR' Where it accepts a security code,
+// Wallet security code is comprised of the address plus the private key which is a hash of their special code and special information in a hash function.
+
+const consoleColor = {
+    fgBlack: "\x1b[30m",
+    fgRed: "\x1b[31m",
+    fgGreen: "\x1b[32m",
+    fgYellow: "\x1b[33m",
+    fgBlue: "\x1b[34m",
+    fgMagenta: "\x1b[35m",
+    fgCyan: "\x1b[36m",
+    fgWhite: "\x1b[37m"
+};
+
+
+const Header = `
+            ████████████
+        ██████████████████
+        ███████  ██  █████████
+    █████              █████
+    █████████  ██  ███  ██████
+    █████████████████  ███████
+    ████████████████  ████████
+      ██████████████  ████████
+      ████████████  ████████
+        ██████████████████
+            ████████████
+`;
+
 app.use(bodyParser.json());
 
 app.get('/blocks', (req, res) => {
@@ -42,6 +72,7 @@ app.post('/get-balance', (req, res) => {
 app.get('/getBalance', (req, res) => {
     let localBalance = wallet.calculateBalance(bc);
     console.log(`Local balance: ${localBalance}`);
+
     res.send(localBalance);
 });
 
@@ -71,6 +102,7 @@ app.post('/transact-nosthree', (req, res) => {
 });
 
 app.get('/transactions', (req, res) => {
+    console.log(JSON.stringify(tp));
     res.json(tp.transactions);
 });
 
@@ -101,4 +133,16 @@ app.post('/transact', (req, res) => {
 });
 
 app.listen(HTTP_PORT, () => console.log(`Listening on ${HTTP_PORT}`));
+console.log(consoleColor.fgRed, 'Color Test');  //cyan
+
+console.log(consoleColor.fgRed, `
+
+
+
+
+
+`)
+
+
+
 p2pServer.listen();
