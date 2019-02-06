@@ -134,15 +134,4 @@ app.post('/transact', (req, res) => {
 
 app.listen(HTTP_PORT, () => console.log(`Listening on ${HTTP_PORT}`));
 console.log(consoleColor.fgRed, 'Color Test');  //cyan
-
-console.log(consoleColor.fgRed, `
-
-
-
-
-
-`)
-
-
-
 p2pServer.listen();
