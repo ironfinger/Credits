@@ -6,7 +6,7 @@ const Wallet = require('../Wallet');
 const TransactionPool = require('../Wallet/transaction-pool');
 const Miner = require('./miner');
 
-const HTTP_PORT = process.env.HTTP_PORT ||  3010;
+const HTTP_PORT = process.env.HTTP_PORT ||  3000;
 
 const app = express();
 const bc = new Blockchain(); // Blockchain object.
