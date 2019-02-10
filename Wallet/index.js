@@ -7,6 +7,7 @@ class Wallet {
         this.balance = INITIAL_BALANCE; // Set the initial balance.
         this.keyPair = ChainUtil.genKeyPair(); // This generates a key pair object.
         this.publicKey = this.keyPair.getPublic().encode('hex'); // Get the public key and turn it into it's hex form.
+        this.privateAddress = 'mmm';
     }
 
     toString() {

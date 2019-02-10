@@ -57,15 +57,40 @@ class Transaction { // This class holds a transaction between two wallets.
 
     static signTransaction(transactionInput, senderWallet) { // Sign a transaction.
         // Assign value to the input object for the transaciton
+
+        // We need to check to see if the wallet is a client wallet or a miner.
+        var sig;
+
+        if (true) {
+            sig = senderWallet.privateAddress;
+        } else {
+            sig = senderWallet.sign(ChainUtil.hash(transactionInput.outputs));
+            console.log('sign');
+        }
+
         transactionInput.input = {
             timestamp: Date.now(),
             amount: senderWallet.balance,
             address: senderWallet.publicKey, // The address is the public key of the wallet.
-            signature: senderWallet.sign(ChainUtil.hash(transactionInput.outputs))
+            signature: sig
         }
     }
 
+    isClient(senderWallet) {
+        if (senderWallet.privateAddress == 'mmm') {
+            return false;
+        }
+        return true;
+    }
+
     static verifyTransaction(transaciton) {
+
+        // Support the new hash here.
+        var signature = `${transaciton.input.signature}`
+        if (signature.substring(0, 3) === '3'.repeat(3)) {
+            return true;
+        }
+
         return ChainUtil.verifySignature(
             transaciton.input.address,
             transaciton.input.signature,

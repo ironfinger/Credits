@@ -1,7 +1,7 @@
 // $ HTTP_PORT=3002 P2P_PORT=5003 PEERS=ws://localhost:5001,ws://localhost:5002 npm run dev
 const WebSocket = require('ws');
 
-const P2P_PORT = process.env.P2P_PORT || 5001;
+const P2P_PORT = process.env.P2P_PORT || 5000;
 const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 const MESSAGE_TYPES = { // We need a way of differentiating between different message types.
     chain: 'CHAIN', // This will be used to recognise a chain.
