@@ -19,6 +19,14 @@ class Wallet {
     sign(dataHash) {
         return this.keyPair.sign(dataHash);
     }
+
+    getPublic() {
+        return this.publicKey;
+    }
+
+    getPrivate() {
+        return this.keyPair.getPrivate().toString('hex');
+    }
     
     // Replace a transaction in the pool by the sender with an upadted version.
     // Or crreate a fresh new transaction and add it to the pool.

@@ -8,6 +8,10 @@ class ChainUtil {
         return ec.genKeyPair();
     }    
 
+    static keyPairFromPrivate(privateKey) {
+        return ec.keyFromPrivate(privateKey);
+    }
+
     static id() {
         return uuidV1();
     }
