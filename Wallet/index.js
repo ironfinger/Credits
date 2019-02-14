@@ -97,6 +97,63 @@ class Wallet {
         return balance;
     }
 
+    static getTransactions(publicKey, bc) {
+       let transactions = [];
+       let outgoing = [];
+       let incomming = [];
+
+       // OUTGOING:
+       console.log('Outgoing');
+        bc.chain.forEach(block => block.data.forEach(transaction => {
+            transactions.push(transaction);
+            console.log(transaction);
+        }));
+
+        const outgoingtemp = transactions.filter(transaction => transaction.input.address === publicKey);
+        console.log(`Outgoing: ${outgoingtemp}`);
+        outgoingtemp.forEach(transaction => {
+            var timestamp = transaction.timestamp;
+
+            outgoingtemp.outputs.forEach(output => {
+                var rtn = {
+                    amount: output.address,
+                    address: output.address,
+                    timestamp: timestamp
+                }
+                outgoing.push(rtn);
+            });
+        });
+
+       // INCOMING:
+        const incommingTemp = transactions.filter(transaction => transaction.input.address !== publicKey);
+        incommingTemp.forEach(transaction => {
+            var timestamp = transaction.timestamp;
+            transaction.outputs.forEach(output => {
+                if (output.address === publicKey) {
+                    var rtn = {
+                        amount: output.amount,
+                        address:output.address,
+                        timestamp: timestamp
+                    }
+                    incomming.push(rtn);
+                }
+            });
+        });
+
+        // JOIN:
+
+        let finalTransactions = [];
+        outgoing.forEach(out => {
+            finalTransactions.push(out); 
+        });
+
+        incomming.forEach(inc => {
+            finalTransactions.push(inc);
+        });
+
+        return finalTransactions;
+    }
+
     static blockchainWallet() {
         const blockchainWallet = new this();
         blockchainWallet.address = 'blockchain-wallet';

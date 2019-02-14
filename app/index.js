@@ -17,6 +17,8 @@ const wallet = new Wallet();
 const miner = new Miner(bc, tp, wallet, p2pServer);
 
 const clients = []; 
+var tempBalance = null;
+var tempWallet = null;
 
 app.use(bodyParser.json());
 
@@ -59,11 +61,33 @@ app.post('/client-transact',(req, res) => {
 });
 
 app.post('/balance', (req, res) => {
+    const { publicKey } = req.body;
 
+    const nWallet = new Wallet();
+    nWallet.publicKey = publicKey;
+
+    tempBalance = nWallet.calculateBalance(bc);
+
+    res.redirect('/give-client-balance');
 });
 
 app.get('/give-client-balance', (req, res) => {
+    res.json({
+        balance: tempBalance
+    });
+});
 
+app.post ('/client-transactions', (req, res) => {
+    const { publicKey } = req.body;
+
+    tempWallet = new Wallet();
+    tempWallet.publicKey = publicKey;
+    res.redirect('/give-client-transactions');
+});
+
+app.get('/give-client-transactions', (req, res) => {
+    const transactions = Wallet.getTransactions(tempWallet.publicKey, bc);
+    res.json(transactions);
 });
 
 app.get('/blocks', (req, res) => {
